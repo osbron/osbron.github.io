@@ -34,9 +34,7 @@ $(function(){
 	arrCSS();
 	arrINX("auto");
 	bind();
-	setTimeout(function() { 
-		arrINX();
-    }, 1000);
+	arrMAP();
 });
 
 function bind(){
@@ -59,9 +57,7 @@ function arrINX(num){ //產出地圖數據
 	    	INX[i] = Math.floor(Math.random()*2);
 	    	// INX[i] = 0;
 	    }
-	}else{
-
-	}
+	}else{ }
 };
 
 function arrCSS(){ //產出地圖CSS
