@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, user-scalable=1, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0" />
+<script src="js/jquery-3.7.1.min.js"></script>
+<script src="js/map.json"></script>
+<style id="css">
+html, body, div, span, applet, object, iframe,h1, h2, h3, h4, h5, h6, p, blockquote, pre,a, abbr, acronym, address, big, cite, code,del, dfn, em, font, img, ins, kbd, q, s, samp,small, strike, strong, sub, sup, tt, var,b, u, i, center,dl, dt, dd, ol, ul, li,fieldset, form, label, legend,table, caption, tbody, tfoot, thead, tr, th, td{margin: 0;padding: 0;border: 0;outline: 0;background: transparent;}body{line-height: 1;}ol, ul{list-style: none;}blockquote, q{quotes: none;}blockquote:before, blockquote:after,q:before, q:after{content: '';content: none;}:focus{outline: 0;}ins{text-decoration: none;}del{text-decoration: line-through;}table{border-collapse: collapse;border-spacing: 0;}*{margin: 0; padding: 0; -webkit-box-sizing: border-box; box-sizing: border-box; -webkit-text-size-adjust: none; list-style: none;}
+
+.wrap {background-color: #ccc; padding: 2em 0;}
+.wrap .main {background:#fff url('images/map_wall.png') repeat top left; margin: 0 auto; position: relative;}
+.wrap .main .map {width: 100%;}
+.wrap .main .map li {width: 1em; height: 1em; display: inline-block; vertical-align: top; background-size: 100%!important;;}
+.wrap .main .map li.ha {background: url('images/map_001.png') no-repeat center center;}
+.wrap .main .map li.ma0 {background: url('images/osb_0.gif') no-repeat center center;}
+.wrap .main .map li.ma1 {background: url('images/osb_1.gif') no-repeat center center;}
+.wrap .main .map li.ma2 {background: url('images/osb_2.gif') no-repeat center center;}
+.wrap .main .map li.ma3 {background: url('images/osb_3.gif') no-repeat center center;}
+.wrap .main .map li.jo {background-color: #0f0;}
+</style>
+<script>
+var INX={},
+	OS={
+		"ium":15, //地圖格
+		"fsz":40, //單格寬
+		"mai":'', //主角所在位置
+		"kai":'', //主角面向
+		"mps":31 //地圖數
+	};
+OS.map=OS.ium*OS.ium;
+
+$(function(){
+	arrCSS();
+	arrINX(map001);
+	bind();
+	setTimeout(function() { 
+		arrINX();
+    }, 1000);
+});
+
+function bind(){
+	$(document).keydown(function(event){
+		if(event.keyCode==38){
+			move(OS.mai-OS.ium,2);
+		}else if(event.keyCode==40){
+			move(OS.mai+OS.ium,3);
+		}else if(event.keyCode==37){
+			move(OS.mai-1,0);
+		}else if(event.keyCode==39){
+			move(OS.mai+1,1);
+		};
+	});  
+}
+
+function arrINX(num){ //產出地圖數據
+	if(num=="auto"){
+		for(var i=0; i<OS.map; i++){
+	    	INX[i] = Math.floor(Math.random()*2);
+	    	// INX[i] = 0;
+	    }
+	}else{
+		var san = num;
+		for(var i=0; i<OS.map; i++){
+	    	INX[i] = san[i];
+	    }
+	}
+};
+
+function arrCSS(){ //產出地圖CSS
+	var addcss = "";
+	for(var i=0; i<OS.mps; i++){
+		s=i+1;
+    	addcss += ".wrap .main .map li.mp"+s+" {background: url('images/map_a0"+s+".png') no-repeat center center;}"
+	}
+	$("#css").append(addcss); 
+};
+
+function arrMAP(){ //視覺化地圖
+	var addli = "",
+		csic = "body{font-size:"+OS.fsz+"px;} .wrap .main {max-width:"+OS.ium+"em; height:"+OS.ium+"em;}";
+	$("#css").prepend(csic);
+	for(var i=0; i<OS.map; i++){
+    	addli += "<li";
+    	if(INX[i] == 1){
+    		INX[i] = Math.floor(Math.random()*OS.mps)+1;
+    		addli += " class='mp"+INX[i]+"'";
+    	}
+    	addli += "></li>";
+    }  
+    $(".map").append(addli);
+    newman();
+};
+
+function newman(){ //設定角出現位置
+	OS.mai = Math.floor(Math.random()*OS.map);
+	if(INX[OS.mai]==0){
+		$(".map").find("li").eq(OS.mai).addClass("ma3");
+	}else{
+		newman();
+	}
+}
+
+function move(siu,kai){ //控制角走動
+	var ndis = siu;
+	OS.kai = kai;
+	console.log("主角:"+OS.mai+" 目標:"+ndis+" 除值:"+ndis%OS.ium+"")
+	if(ndis>=0 && INX[ndis]==0 || ndis>OS.map && INX[ndis]==0){
+		if(OS.kai==0&&ndis%OS.ium==OS.ium-1){
+			console.log("左Crash!");
+		}else if(OS.kai==1&&ndis%OS.ium==0){
+			console.log("右Crash!");
+		}else{
+			$(".map").find("li").eq(OS.mai).removeAttr("class","");
+			$(".map").find("li").eq(ndis).addClass("ma"+OS.kai);
+			OS.mai=ndis;
+		}
+	// }else if(INX[ndis]==2){
+	// 		$(".map").find("li").eq(OS.mai).removeAttr("class","");
+	// 		$(".map").find("li").eq(ndis).addClass("ma"+OS.kai);
+	// 		OS.mai=ndis;
+	// 		console.log("Attack!");
+	}else{
+		console.log("Crash!");
+		$(".map").find("li").eq(OS.mai).removeAttr("class","").addClass("ma"+OS.kai);
+	}
+}
+
+</script>
+</head>
+<body>
+<div class="wrap">
+	<div class="main">
+		<ul class="map">
+		</ul>
+	</div>
+</div>	
+</body>
+</html>
