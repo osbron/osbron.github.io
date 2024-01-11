@@ -32,7 +32,7 @@ OS.map=OS.ium*OS.ium;
 
 $(function(){
 	arrCSS();
-	arrINX(auto);
+	arrINX("auto");
 	bind();
 	setTimeout(function() { 
 		arrINX();
@@ -60,9 +60,7 @@ function arrINX(num){ //產出地圖數據
 	    	// INX[i] = 0;
 	    }
 	}else{
-		var san = num;
-		for(var i=0; i<OS.map; i++){
-	    	INX[i] = san[i];
+
 	    }
 	}
 };
